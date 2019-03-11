@@ -9,6 +9,7 @@ import time
 import io
 import cv2
 import numpy
+from pynput.mouse import Controller
 
 def screenshot():
     with mss.mss() as sct:
@@ -39,11 +40,21 @@ def transmit(host='0.0.0.0', port=6969):
             print(len(data_string))
             conn.send(str(len(data_string)).encode())
 
+            mouse = Controller()
+            last_mouse_input = [0,0]
             while True:
-                start_time = time.time()
+                #start_time = time.time()
                 conn.sendall(data_string)
                 data_string = image_serializer()
-                print("FPS: ", 1/(time.time() - start_time))
+                
+                mouse_input = list(eval(conn.recv(15).decode()))
+                mouse_input[0] = mouse_input[0]/1280 * 1920
+                mouse_input[1] = mouse_input[1]/720 * 1080
+                print(mouse_input)
+                if mouse_input != last_mouse_input:
+                    mouse.position = tuple(mouse_input)
+                    last_mouse_input = mouse_input
+                #print("FPS: ", 1/(time.time() - start_time))
                 
 if __name__ == "__main__":
     transmit()
