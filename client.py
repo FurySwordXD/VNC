@@ -6,7 +6,6 @@ import time
 from data import SocketData, InputData
 import pickle
 from threading import Thread
-from pynput.mouse import Listener
 
 class Receiver:
 
@@ -15,18 +14,6 @@ class Receiver:
         self.length = 0
         self.receiver = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.receiver.connect((host, port))
-        self.mouse_pos = (0,0)
-    
-    def on_move(self, x, y):
-        self.mouse_pos = (x, y)
-
-    def on_click(self, x, y, button, pressed):
-        pass
-        #print('{0} at {1}'.format('Pressed' if pressed else 'Released', (x, y)))
-
-    def on_scroll(self, x, y, dx, dy):
-        pass
-        #print('Scrolled {0}'.format((x, y)))
 
     def receive(self):
   
@@ -41,29 +28,61 @@ class Receiver:
 
             self.image = pickle.loads(self.data_string).image
 
-            #data = InputData(mouse_pos=self.mouse_pos)
-            #data = pickle.dumps(data)
-            #input_length = len(data)
-            self.receiver.send(str(self.mouse_pos).encode())
-            #self.receiver.send(pickle.dumps(data))
-            #print("FPS: ", 1/(time.time() - start_time))
 
+class InputManager:
+
+    def __init__(self, host='127.0.0.1', port=7000):
+        self.input = [0, 0, False, False, []]
+        self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.conn.connect((host, port))
+        
     def motion(self, event):
-        self.mouse_pos = (event.x, event.y)
+        pass
+        #self.input[0], self.input[1] = event.x, event.y
 
-def gui(receiver):
+    def key(self, event):
+        self.input[4].append(repr(event.char))
+
+    def left_click_pressed(self, event):
+        self.input[0], self.input[1] = event.x, event.y
+        self.input[2] = True
+
+    def left_click_released(self, event):
+        self.input[0], self.input[1] = event.x, event.y
+        self.input[2] = False
+
+    def right_click_pressed(self, event):
+        self.input[0], self.input[1] = event.x, event.y
+        self.input[3] = True
+
+    def right_click_released(self, event):
+        self.input[0], self.input[1] = event.x, event.y
+        self.input[3] = False
+
+    def transmit(self):
+        while True:
+            self.conn.send(str(self.input).encode())
+            self.input[4] = []
+            time.sleep(0.2)
+        
+def gui(receiver, input_manager):
     window = tk.Tk()
     window.geometry("1280x720")
     window.title("VNC Madafaka")
-    window.bind('<Motion>', receiver.motion)
-    cv = tk.Canvas()
-    cv.pack(side='top', fill='both', expand='yes')
-
+    
+    canvas = tk.Canvas()
+    canvas.bind("<Motion>", input_manager.motion)
+    canvas.bind("<Key>", input_manager.key)
+    canvas.bind("<ButtonPress-1>", input_manager.left_click_pressed)
+    canvas.bind("<ButtonRelease-1>", input_manager.left_click_released)
+    canvas.bind("<ButtonPress-2>", input_manager.right_click_pressed)
+    canvas.bind("<ButtonRelease-2>", input_manager.right_click_released)
+    canvas.pack(side='top', fill='both', expand='yes')
     while True:
         try:
             image = receiver.image.resize((window.winfo_width(), window.winfo_height()), Image.ANTIALIAS)
             photo = ImageTk.PhotoImage(image=image)
-            cv.create_image(0, 0, image=photo, anchor='nw')
+            canvas.create_image(0, 0, image=photo, anchor='nw')
         except:
             pass
         try:
@@ -72,19 +91,15 @@ def gui(receiver):
             exit(0)
 
 
-
-
-# Collect events until released
-
 if __name__ == "__main__":
     r = Receiver()
     #r.receive()
-
     th = Thread(target=r.receive, args=[])
     th.start()
-    #listener = Listener(on_move=r.on_move, on_click=r.on_click, on_scroll=r.on_scroll)
-    #listener.start()
-    gui(r)    
+    i = InputManager()
+    t2 = Thread(target=i.transmit, args=[])
+    t2.start()
+    gui(r, i)    
 
 
 
