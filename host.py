@@ -6,10 +6,12 @@ from vnc import VNC
 if __name__ == "__main__":
     host = VNC("0.0.0.0", 6969)
     input_manager = InputManager("0.0.0.0", 7000)
-    t1 = Thread(target=host.transmit, args=[])
-    t2 = Thread(target=input_manager.receive, args=[])
-    t1.start()
-    t2.start()
+
+    feed_transmitter_thread = Thread(target=host.transmit, args=[])
+    feed_transmitter_thread.start()
+
+    input_receiver_thread = Thread(target=input_manager.receive, args=[])
+    input_receiver_thread.start()
 
 
 

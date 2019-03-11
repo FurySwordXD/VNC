@@ -33,12 +33,13 @@ def gui(client, input_manager):
 
 if __name__ == "__main__":
     client = VNC("127.0.0.1", 6969)
-    receiver_thread = Thread(target=client.receive, args=[])
-    receiver_thread.start()
-
     input_manager = InputManager("127.0.0.1", 7000)
-    input_thread = Thread(target=input_manager.transmit, args=[])
-    input_thread.start()
+
+    feed_receiver_thread = Thread(target=client.receive, args=[])
+    feed_receiver_thread.start()
+
+    input_transmitter_thread = Thread(target=input_manager.transmit, args=[])
+    input_transmitter_thread.start()
 
     gui(client, input_manager)
 
