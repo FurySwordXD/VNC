@@ -32,6 +32,15 @@ class VNC:
         return data_string
 
 
+    def recvall(self,receiver, buffer_size=65536):
+        data_buffer = b''
+        data_chunk=receiver.recv(buffer_size)
+        while len(data_chunk) >= buffer_size:
+            data_buffer+=data_chunk
+            data_chunk=receiver.recv(buffer_size)
+        data_buffer+=data_chunk
+        return data_buffer
+
     def transmit(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sender:
             sender.bind((self.ip, self.port))
@@ -64,10 +73,10 @@ class VNC:
             try:
                 #start_time = time.time()
                 self.data_string = b''
-                self.data_string = conn.recv(length)
+                self.data_string = self.recvall(conn)
                 self.image = pickle.loads(self.data_string).image
                 #print(self.image)
-                #self.image.show()
+                # self.image.show()
                 #print("FPS: ", 1/(time.time() - start_time))0
             except:
                 pass
