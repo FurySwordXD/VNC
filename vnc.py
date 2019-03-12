@@ -67,7 +67,7 @@ class VNC:
                 self.data_string = conn.recv(length)
                 self.image = pickle.loads(self.data_string).image
                 #print(self.image)
-                self.image.show()
+                #self.image.show()
                 #print("FPS: ", 1/(time.time() - start_time))0
             except:
                 pass
