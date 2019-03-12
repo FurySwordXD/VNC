@@ -46,7 +46,7 @@ class InputManager:
         while True:
             conn.send(str(self.input).encode())
             self.input["keys"] = []
-            time.sleep(0.1)
+            time.sleep(0.2)
 
     def receive(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sender:

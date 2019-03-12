@@ -1,6 +1,7 @@
 from tkinter import Canvas, Tk
 from PIL import Image, ImageTk
 from threading import Thread
+from sys import argv
 import time
 
 from input_manager import InputManager
@@ -32,8 +33,14 @@ def gui(client, input_manager):
         window.update()
 
 if __name__ == "__main__":
-    client = VNC("127.0.0.1", 6969)
-    input_manager = InputManager("127.0.0.1", 7000)
+
+    try:
+        ip = argv[1]
+    except:
+        ip = "127.0.0.1"
+    print(ip)
+    client = VNC(ip, 6969)
+    input_manager = InputManager(ip, 7000)
 
     feed_receiver_thread = Thread(target=client.receive, args=[])
     feed_receiver_thread.start()
