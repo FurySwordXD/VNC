@@ -36,14 +36,16 @@ class VNC:
         return data_string
 
 
-    def recvall(self, receiver, buffer_size=65536):
-        data_buffer = []
-        while True:
-            packet = receiver.recv(4096)
-            if not packet: break
-            data_buffer.append(packet)
+    def recvall(self, receiver, length, buffer_size=65536):
+        data_buffer = b""
+        while len(data_buffer) < length:
+            packet = receiver.recv(buffer_size)
+            if not packet:  
+                break
+            #print(packet)
+            data_buffer += packet
 
-        return b"".join(data_buffer)
+        return data_buffer
 
     def transmit(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sender:
@@ -62,6 +64,7 @@ class VNC:
                     #start_time = time.time()
                     conn.sendall(self.data_string)
                     self.data_string = self.image_serializer()
+                    print(conn.recv(10).decode())
                     #print("FPS: ", 1/(time.time() - start_time))
     
     def receive(self):    
@@ -77,9 +80,10 @@ class VNC:
             try:
                 #start_time = time.time()
                 #self.data_string = b''
-                self.data_string = self.recvall(conn)
+                self.data_string = self.recvall(conn, length)
                 #self.data_string = conn.recv(length)
-                self.image = pickle.loads(self.data_string[:length])
+                self.image = pickle.loads(self.data_string)
+                conn.send("Received".encode())
                 #self.image.show()
                 #print(self.image)
                 # self.image.show()
