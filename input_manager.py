@@ -1,5 +1,6 @@
 import socket
 import time
+import pyautogui
 from pynput.mouse import Controller, Button
 
 class InputManager:
@@ -58,14 +59,15 @@ class InputManager:
             with conn:
                 print('Connected by', addr)
 
+                width, height = pyautogui.size()
                 mouse = Controller()
                 last_mouse_input = [0,0]
                 while True:
                     #start_time = time.time()
                     received_input = eval(conn.recv(1024).decode())
                     mouse_input = received_input["mouse_pos"]
-                    mouse_input[0] = mouse_input[0]/1280 * 1920
-                    mouse_input[1] = mouse_input[1]/720 * 1080
+                    mouse_input[0] = mouse_input[0]/1280 * width
+                    mouse_input[1] = mouse_input[1]/720 * height
                     #print(received_input)
                     if mouse_input != last_mouse_input:
                         mouse.position = tuple(mouse_input)

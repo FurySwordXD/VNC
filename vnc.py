@@ -34,7 +34,7 @@ class VNC:
         #        data_string += str(column)
         #    data_string += "]"
         #data_string += "]"
-        return data_string + ">|"
+        return data_string
 
 
     def recvall(self, receiver, length, buffer_size=65536):
@@ -62,11 +62,11 @@ class VNC:
                 conn.send(str(len(self.data_string)).encode())
 
                 while True:
-                    #start_time = time.time()
+                    start_time = time.time()
                     conn.sendall(self.data_string)
                     self.data_string = self.image_serializer()
                     #print(conn.recv(10).decode())
-                    #print("FPS: ", 1/(time.time() - start_time))
+                    print("FPS: ", 1/(time.time() - start_time))
     
     def receive(self):    
         conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -79,16 +79,13 @@ class VNC:
 
         while True:
             try:
-                #start_time = time.time()
+                start_time = time.time()
                 #self.data_string = b''
                 self.data_string += self.recvall(conn, length)
                 #self.data_string = conn.recv(length)
                 self.image = pickle.loads(self.data_string[:length])
                 self.data_string = self.data_string[length:]
                 #conn.send("Received".encode())
-                #self.image.show()
-                #print(self.image)
-                # self.image.show()
-                #print("FPS: ", 1/(time.time() - start_time))0
+                print("FPS: ", 1/(time.time() - start_time))
             except Exception as e:
                 print(e)
