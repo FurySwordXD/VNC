@@ -10,14 +10,11 @@ import re
 
 class VNC:
 
-    def __init__(self, ip='127.0.0.1', port=7000, open_sockets=4):
+    def __init__(self, ip='127.0.0.1', port=7000, open_sockets=10):
         self.data_string = b''
         self.ip = ip
         self.port = port
         self.open_sockets = open_sockets
-        self.data = []
-        for i in range(open_sockets):
-            self.data.append([])
 
     def screenshot(self):
         with mss.mss() as sct:
@@ -46,7 +43,8 @@ class VNC:
         data_buffer = b''
         while len(data_buffer) < length:
             packet = receiver.recv(buffer_size)
-            if not packet: break
+            if not packet: 
+                break
             data_buffer += packet
         return data_buffer
 
@@ -119,12 +117,11 @@ class VNC:
                 time.sleep(1)
                 #print("Sending bytes...")
                 while True:
-                    if part_index == 0:
-                        data_string = self.image_serializer()
-                        self.split_data_list = self.split_data(data_string)
+                    data_string = self.image_serializer()
+                    split_data_list = self.split_data(data_string)
                     try: 
-                        conn.sendall(self.split_data_list[part_index])
-                        print(conn.recv(20).decode())
+                        conn.sendall(split_data_list[part_index])
+                        print(conn.recv(10).decode())
                     except Exception as e:
                         print(e)
                     
@@ -135,27 +132,31 @@ class VNC:
 
             length = int(receiver.recv(10).decode())
             print(length)
-            
-            stride = 0
+
             byte_data = b''
+            self.data = []
+
             while True:
+                
+                #try:
+                #    if self.data[-1][part_index]:
+                #        pass
+                #except Exception as e:
+                #    print(e)
+                #    self.data.append([])
+
                 byte_data += self.recvall(receiver, length)
-                self.data[stride].insert(part_index, byte_data[:length])
+                try:
+                    self.data[part_index] = byte_data[:length]
+                except:
+                    self.data.insert(part_index, byte_data[:length])
                 byte_data = byte_data[length:]
                 #print("Thread ("+str(part_index)+"): ", len(self.data[stride]))
-                try:
-                    if len(self.data[stride]) == self.open_sockets:
-                        self.image = pickle.loads(b"".join(self.data[stride]))
-                        self.data[stride] = []
-                except Exception as e:
-                    print(e)
-                    self.data[stride] = []
-
-                stride += 1
-                if stride == self.open_sockets:
-                    stride = 0
+                if len(self.data) == self.open_sockets:
+                    print(part_index)
+                    self.image = pickle.loads(b"".join(self.data))
                 
-                receiver.send("Received".encode())
+                receiver.send("ACK".encode())
 
     def start_transmit(self):
         for i in range(self.open_sockets):
