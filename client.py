@@ -39,11 +39,12 @@ if __name__ == "__main__":
     except:
         ip = "127.0.0.1"
     print(ip)
-    client = VNC(ip, 6969)
-    input_manager = InputManager(ip, 7000)
+    client = VNC(ip, 7000)
+    input_manager = InputManager(ip, 6969)
 
-    feed_receiver_thread = Thread(target=client.receive, args=[])
-    feed_receiver_thread.start()
+    client.start_receive()
+    #feed_receiver_thread = Thread(target=client.receive, args=[])
+    #feed_receiver_thread.start()
 
     input_transmitter_thread = Thread(target=input_manager.transmit, args=[])
     input_transmitter_thread.start()

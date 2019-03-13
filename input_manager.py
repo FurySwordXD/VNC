@@ -5,7 +5,7 @@ from pynput.mouse import Controller, Button
 
 class InputManager:
 
-    def __init__(self, ip='0.0.0.0', port=7000):
+    def __init__(self, ip='0.0.0.0', port=6969):
         self.input = {
             "mouse_pos": [0,0],
             "lmb": False,
