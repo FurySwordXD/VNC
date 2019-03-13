@@ -26,7 +26,7 @@ def image_serializer(resolution=(1280, 720)):
     return data_string
 
 class Sender:
-    def __init__(self, open_sockets=2):
+    def __init__(self, open_sockets=100):
         self.parts = open_sockets
 
         data_string = image_serializer()

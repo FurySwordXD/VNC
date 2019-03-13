@@ -3,12 +3,8 @@ import socket
 import time
 import pickle
 import mss
-
-class SocketData:
-    image = []
-
-    def __init__(self, image):
-        self.image = image
+import numpy
+import json
 
 class VNC:
 
@@ -27,19 +23,27 @@ class VNC:
 
     def image_serializer(self, resolution=(1280, 720)):
         image = self.screenshot().resize(resolution, Image.ANTIALIAS)
-        data = SocketData(image=image)
-        data_string = pickle.dumps(data)
+        #np_image = numpy.array(image)
+        data_string = pickle.dumps(image)
+        #print("Start")
+        #data_string = "["
+        #for row in np_image:
+        #    data_string += "["
+        #    for column in row:
+        #        data_string += str(column)
+        #    data_string += "]"
+        #data_string += "]"
         return data_string
 
 
-    def recvall(self,receiver, buffer_size=65536):
-        data_buffer = b''
-        data_chunk=receiver.recv(buffer_size)
-        while len(data_chunk) >= buffer_size:
-            data_buffer+=data_chunk
-            data_chunk=receiver.recv(buffer_size)
-        data_buffer+=data_chunk
-        return data_buffer
+    def recvall(self, receiver, buffer_size=65536):
+        data_buffer = []
+        while True:
+            packet = receiver.recv(4096)
+            if not packet: break
+            data_buffer.append(packet)
+
+        return b"".join(data_buffer)
 
     def transmit(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sender:
@@ -72,11 +76,13 @@ class VNC:
         while True:
             try:
                 #start_time = time.time()
-                self.data_string = b''
+                #self.data_string = b''
                 self.data_string = self.recvall(conn)
-                self.image = pickle.loads(self.data_string).image
+                #self.data_string = conn.recv(length)
+                self.image = pickle.loads(self.data_string[:length])
+                #self.image.show()
                 #print(self.image)
                 # self.image.show()
                 #print("FPS: ", 1/(time.time() - start_time))0
-            except:
-                pass
+            except Exception as e:
+                print(e)

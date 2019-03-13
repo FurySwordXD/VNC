@@ -10,7 +10,7 @@ import sys
 
 class Receiver:
 
-    def __init__(self, open_sockets=2):
+    def __init__(self, open_sockets=100):
         self.data_string = ""
         self.length = 0
         self.open_sockets = open_sockets

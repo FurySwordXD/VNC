@@ -1,7 +1,6 @@
 import socket
 import time
 from pynput.mouse import Controller, Button
-from pynput.keyboard import Controller
 
 class InputManager:
 
