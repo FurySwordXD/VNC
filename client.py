@@ -46,6 +46,7 @@ if __name__ == "__main__":
     #feed_receiver_thread = Thread(target=client.receive, args=[])
     #feed_receiver_thread.start()
 
+    time.sleep(2)
     input_transmitter_thread = Thread(target=input_manager.transmit, args=[])
     input_transmitter_thread.start()
 

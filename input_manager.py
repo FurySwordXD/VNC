@@ -5,7 +5,7 @@ from pynput.mouse import Controller, Button
 
 class InputManager:
 
-    def __init__(self, ip='0.0.0.0', port=6969):
+    def __init__(self, ip='0.0.0.0', port=6969, width=640, height=480):
         self.input = {
             "mouse_pos": [0,0],
             "lmb": False,
@@ -14,6 +14,8 @@ class InputManager:
         }
         self.ip = ip
         self.port = port
+        self.width = width
+        self.height = height
         
     def motion(self, event):
         #self.input["mouse_pos"] = [event.x, event.y]
@@ -66,8 +68,8 @@ class InputManager:
                     #start_time = time.time()
                     received_input = eval(conn.recv(1024).decode())
                     mouse_input = received_input["mouse_pos"]
-                    mouse_input[0] = mouse_input[0]/1280 * width
-                    mouse_input[1] = mouse_input[1]/720 * height
+                    mouse_input[0] = mouse_input[0]/800 * width
+                    mouse_input[1] = mouse_input[1]/450 * height
                     #print(received_input)
                     if mouse_input != last_mouse_input:
                         mouse.position = tuple(mouse_input)

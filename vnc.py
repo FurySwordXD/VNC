@@ -10,7 +10,7 @@ import re
 
 class VNC:
 
-    def __init__(self, ip='127.0.0.1', port=7000, open_sockets=10):
+    def __init__(self, ip='127.0.0.1', port=7000, open_sockets=4):
         self.data_string = b''
         self.ip = ip
         self.port = port
@@ -24,7 +24,7 @@ class VNC:
     def rgba_to_rgb(self, image):
         return Image.frombytes('RGB', image.size, image.bgra, 'raw', 'BGRX')
 
-    def image_serializer(self, resolution=(1280, 720)):
+    def image_serializer(self, resolution=(800, 450)):
         image = self.screenshot().resize(resolution, Image.ANTIALIAS)
         #np_image = numpy.array(image)
         data_string = pickle.dumps(image)
