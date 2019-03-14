@@ -15,6 +15,10 @@ class VNC:
         self.ip = ip
         self.port = port
         self.open_sockets = open_sockets
+        
+        self.data = []
+        for i in range(self.open_sockets*2):
+            self.data.append([])
 
     def screenshot(self):
         with mss.mss() as sct:
@@ -121,7 +125,7 @@ class VNC:
                     split_data_list = self.split_data(data_string)
                     try: 
                         conn.sendall(split_data_list[part_index])
-                        print(conn.recv(10).decode())
+                        #print(conn.recv(10).decode())
                     except Exception as e:
                         print(e)
                     
@@ -134,8 +138,8 @@ class VNC:
             print(length)
 
             byte_data = b''
-            self.data = []
 
+            stride = 0
             while True:
                 
                 #try:
@@ -147,16 +151,20 @@ class VNC:
 
                 byte_data += self.recvall(receiver, length)
                 try:
-                    self.data[part_index] = byte_data[:length]
+                    self.data[stride][part_index] = byte_data[:length]
                 except:
-                    self.data.insert(part_index, byte_data[:length])
+                    self.data[stride].insert(part_index, byte_data[:length])
                 byte_data = byte_data[length:]
                 #print("Thread ("+str(part_index)+"): ", len(self.data[stride]))
-                if len(self.data) == self.open_sockets:
-                    print(part_index)
-                    self.image = pickle.loads(b"".join(self.data))
+                try:
+                    if len(self.data[stride]) == self.open_sockets:
+                        self.image = pickle.loads(b"".join(self.data[stride]))
+                        self.data[stride] = []
+                except:
+                    self.data[stride] = []
                 
-                receiver.send("ACK".encode())
+                stride = (stride + 1)%(self.open_sockets*2)
+                #receiver.send("ACK".encode())
 
     def start_transmit(self):
         for i in range(self.open_sockets):

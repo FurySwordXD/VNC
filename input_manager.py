@@ -5,18 +5,21 @@ from pynput.mouse import Controller, Button
 
 class InputManager:
 
-    def __init__(self, ip='0.0.0.0', port=6969, width=640, height=480):
+    def __init__(self, ip='0.0.0.0', port=6969):
         self.input = {
-            "mouse_pos": [0,0],
+            "mouse_pos": [0.0, 0.0],
             "lmb": False,
             "rmb": False,
             "keys": []
         }
         self.ip = ip
         self.port = port
+        
+    def set_resolution(self, width=1280, height=720):
         self.width = width
         self.height = height
-        
+        #print(self.width, self.height)
+
     def motion(self, event):
         #self.input["mouse_pos"] = [event.x, event.y]
         pass
@@ -26,19 +29,19 @@ class InputManager:
         self.input["keys"].append(repr(event.char))
 
     def left_click_pressed(self, event):
-        self.input["mouse_pos"] = [event.x, event.y]
+        self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
         self.input["lmb"] = True
 
     def left_click_released(self, event):
-        self.input["mouse_pos"] = [event.x, event.y]
+        self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
         self.input["lmb"] = False
 
     def right_click_pressed(self, event):
-        self.input["mouse_pos"] = [event.x, event.y]
+        self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
         self.input["rmb"] = True
 
     def right_click_released(self, event):
-        self.input["mouse_pos"] = [event.x, event.y]
+        self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
         self.input["rmb"] = False
 
     def transmit(self):
@@ -48,7 +51,7 @@ class InputManager:
         while True:
             conn.send(str(self.input).encode())
             self.input["keys"] = []
-            time.sleep(0.2)
+            conn.recv(10)
 
     def receive(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sender:
@@ -68,8 +71,8 @@ class InputManager:
                     #start_time = time.time()
                     received_input = eval(conn.recv(1024).decode())
                     mouse_input = received_input["mouse_pos"]
-                    mouse_input[0] = mouse_input[0]/800 * width
-                    mouse_input[1] = mouse_input[1]/450 * height
+                    mouse_input[0] = mouse_input[0] * width
+                    mouse_input[1] = mouse_input[1] * height
                     #print(received_input)
                     if mouse_input != last_mouse_input:
                         mouse.position = tuple(mouse_input)
@@ -83,3 +86,4 @@ class InputManager:
                     #    mouse.press(Button.right)
                     #else:
                     #    mouse.release(Button.right)
+                    conn.send("ACK".encode())
