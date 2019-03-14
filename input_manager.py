@@ -50,6 +50,7 @@ class InputManager:
         conn.connect((self.ip, self.port))
         print("Connected to ", self.ip, ":", self.port)
         while True:
+            #print(self.input["mouse_pos"])
             conn.send(str(self.input).encode())
             self.input["keys"] = []
             conn.recv(10)
@@ -67,6 +68,7 @@ class InputManager:
                 print('Connected by', addr)
 
                 width, height = pyautogui.size()
+                print(width, height)
                 mouse = Controller()
                 last_mouse_input = [0,0]
                 while True:

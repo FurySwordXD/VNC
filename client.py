@@ -37,12 +37,13 @@ def gui(client, input_manager):
             imgNp = np.array(bytearray(imgResp.content),  dtype=np.uint8)
             frame = cv2.cvtColor(cv2.imdecode(imgNp, -1), cv2.COLOR_BGR2RGB)
             image = Image.fromarray(frame)
-            #image = client.image.resize((window.winfo_width(), window.winfo_height()), Image.ANTIALIAS)
+            #image = client.image
+            image = image.resize((window.winfo_width(), window.winfo_height()), Image.ANTIALIAS)
             photo = ImageTk.PhotoImage(image=image)
             canvas.create_image(0, 0, image=photo, anchor='nw')
         except Exception as e:
             print(e)
-        input_manager.set_resolution(window.winfo_width(), window.winfo_height())
+        #input_manager.set_resolution(window.winfo_width(), window.winfo_height())
         window.update_idletasks()
         window.update()
 

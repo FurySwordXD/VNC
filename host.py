@@ -1,7 +1,7 @@
 from threading import Thread
 import time
 from flask import Flask, send_file
-from io import StringIO
+from io import BytesIO
 
 from input_manager import InputManager
 from vnc import VNC
@@ -14,8 +14,10 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     pil_img = host.screenshot()
-    pil_img.save("tmp.jpg", 'JPEG', quality=70)
-    return send_file("tmp.jpg", mimetype='image/jpeg')
+    output = BytesIO()
+    pil_img.save(output, 'JPEG', quality=70)
+    output.seek(0, 0)
+    return send_file(output, mimetype='image/jpeg')
     
 
 if __name__ == "__main__":
@@ -27,7 +29,7 @@ if __name__ == "__main__":
     input_receiver_thread = Thread(target=input_manager.receive, args=[])
     input_receiver_thread.start()
 
-    app.run(host=host.ip, port=host.port, debug=True)
+    app.run(host=host.ip, port=host.port, debug=False)
 
 
 
