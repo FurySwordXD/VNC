@@ -1,5 +1,7 @@
 from PIL import Image
 from threading import Thread
+from io import StringIO
+from flask import send_file
 import socket
 import time
 import pickle
@@ -30,16 +32,7 @@ class VNC:
 
     def image_serializer(self, resolution=(800, 450)):
         image = self.screenshot().resize(resolution, Image.ANTIALIAS)
-        #np_image = numpy.array(image)
         data_string = pickle.dumps(image)
-        #print("Start")
-        #data_string = "["
-        #for row in np_image:
-        #    data_string += "["
-        #    for column in row:
-        #        data_string += str(column)
-        #    data_string += "]"
-        #data_string += "]"
         return data_string
 
 
@@ -175,3 +168,4 @@ class VNC:
         for i in range(self.open_sockets):
             t = Thread(target=self.receive_multi, args=[self.ip, self.port+i, i])
             t.start()
+        

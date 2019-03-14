@@ -3,6 +3,7 @@ import time
 import pyautogui
 from pynput.mouse import Controller, Button
 
+
 class InputManager:
 
     def __init__(self, ip='0.0.0.0', port=6969):
@@ -47,7 +48,7 @@ class InputManager:
     def transmit(self):
         conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         conn.connect((self.ip, self.port))
-
+        print("Connected to ", self.ip, ":", self.port)
         while True:
             conn.send(str(self.input).encode())
             self.input["keys"] = []
@@ -56,9 +57,10 @@ class InputManager:
     def receive(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sender:
 
+            sender.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             sender.bind((self.ip, self.port))
             sender.listen()
-            print('Waiting for connection...')
+            print('Waiting for connection on port('+ str(self.port) +')...')
             conn, addr = sender.accept()
 
             with conn:

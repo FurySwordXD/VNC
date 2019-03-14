@@ -1,19 +1,33 @@
 from threading import Thread
 import time
+from flask import Flask, send_file
+from io import StringIO
 
 from input_manager import InputManager
 from vnc import VNC
-        
-if __name__ == "__main__":
-    host = VNC("0.0.0.0", 7000)
-    input_manager = InputManager("0.0.0.0", 6969)
 
-    host.start_transmit()
+host = VNC("0.0.0.0", 7000)
+input_manager = InputManager("0.0.0.0", 6969)
+app = Flask(__name__)
+
+
+@app.route("/")
+def index():
+    pil_img = host.screenshot()
+    pil_img.save("tmp.jpg", 'JPEG', quality=70)
+    return send_file("tmp.jpg", mimetype='image/jpeg')
+    
+
+if __name__ == "__main__":
+
+    #host.start_transmit()
     #feed_transmitter_thread = Thread(target=host.transmit, args=[])
     #feed_transmitter_thread.start()
 
     input_receiver_thread = Thread(target=input_manager.receive, args=[])
     input_receiver_thread.start()
+
+    app.run(host=host.ip, port=host.port, debug=True)
 
 
 
