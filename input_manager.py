@@ -10,7 +10,7 @@ class InputManager:
             "mouse_pos": [0.0, 0.0],
             "lmb": False,
             "rmb": False,
-            "keys": []
+            "keys": set()
         }
         self.ip = ip
         self.port = port
@@ -23,9 +23,13 @@ class InputManager:
     def motion(self, event):
         self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
 
-    def key(self, event):
-        print(repr(event.char))
-        self.input["keys"].append(repr(event.char))
+    def key_pressed(self, event):
+        print("Key Press: ", repr(event.char))
+        self.input["keys"].add(repr(event.char))
+    
+    def key_released(self, event):
+        print("Key Released: ", repr(event.char))
+        self.input["keys"].remove(repr(event.char))
 
     def left_click_pressed(self, event):
         self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
@@ -82,15 +86,17 @@ class InputManager:
                         last_mouse_input = mouse_input
                         #print(received_input)
                     if received_input['lmb']:
-                        mouse_var.press(mouse.Button.left)
+                        #mouse_var.press(mouse.Button.left)
+                        mouse_var.click(mouse.Button.left)
                         print("LMB")
-                    else:
-                        mouse_var.release(mouse.Button.left)
+                    #else:
+                    #    mouse_var.release(mouse.Button.left)
                     if received_input['rmb']:
-                        mouse_var.press(mouse.Button.right)
+                        #mouse_var.press(mouse.Button.right)
+                        mouse_var.click(mouse.Button.right)
                         print("RMB")
-                    else:
-                        mouse_var.release(mouse.Button.right)
+                    #else:
+                    #    mouse_var.release(mouse.Button.right)
                     for k in received_input['keys']:
                         keyboard_var.press(k)
                     conn.send("ACK".encode())

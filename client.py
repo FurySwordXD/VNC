@@ -22,7 +22,8 @@ def gui(client, input_manager):
     
     canvas = Canvas()
     canvas.bind("<Motion>", input_manager.motion)
-    canvas.bind("<Key>", input_manager.key)
+    canvas.bind("<KeyPress>", input_manager.key_pressed)
+    canvas.bind("<KeyRelase>", input_manager.key_released)
     canvas.bind("<ButtonPress-1>", input_manager.left_click_pressed)
     canvas.bind("<ButtonRelease-1>", input_manager.left_click_released)
     canvas.bind("<ButtonPress-2>", input_manager.right_click_pressed)
