@@ -1,8 +1,7 @@
 import socket
 import time
 import pyautogui
-from pynput.mouse import Controller, Button
-
+from pynput import mouse, keyboard
 
 class InputManager:
 
@@ -22,8 +21,7 @@ class InputManager:
         #print(self.width, self.height)
 
     def motion(self, event):
-        #self.input["mouse_pos"] = [event.x, event.y]
-        pass
+        self.input["mouse_pos"] = [event.x, event.y]
 
     def key(self, event):
         print(repr(event.char))
@@ -69,7 +67,8 @@ class InputManager:
 
                 width, height = pyautogui.size()
                 print(width, height)
-                mouse = Controller()
+                mouse_var = mouse.Controller()
+                keyboard_var = keyboard.Controller()
                 last_mouse_input = [0,0]
                 while True:
                     #start_time = time.time()
@@ -79,15 +78,17 @@ class InputManager:
                     mouse_input[1] = mouse_input[1] * height
                     #print(received_input)
                     if mouse_input != last_mouse_input:
-                        mouse.position = tuple(mouse_input)
+                        mouse_var.position = tuple(mouse_input)
                         last_mouse_input = mouse_input
-                        print(received_input)
-                    #if received_input[2]:
-                    #    mouse.press(Button.left)
-                    #else:
-                    #    mouse.release(Button.left)
-                    #if received_input[3]:
-                    #    mouse.press(Button.right)
-                    #else:
-                    #    mouse.release(Button.right)
+                        #print(received_input)
+                    if received_input['lmb']:
+                        mouse_var.press(mouse.Button.left)
+                    else:
+                        mouse_var.release(mouse.Button.left)
+                    if received_input['rmb']:
+                        mouse_var.press(mouse.Button.right)
+                    else:
+                        mouse_var.release(mouse.Button.right)
+                    for k in received_input['keys']:
+                        keyboard_var.press(k)
                     conn.send("ACK".encode())
