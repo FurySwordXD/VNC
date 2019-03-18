@@ -17,13 +17,16 @@ def gui(client, input_manager):
     
     window.update()
     input_manager.set_resolution(window.winfo_width(), window.winfo_height())
-    input_transmitter_thread = Thread(target=input_manager.transmit, args=[])
-    input_transmitter_thread.start()
+    input_manager.transmit()
+    #input_transmitter_thread = Thread(target=input_manager.transmit, args=[])
+    #input_transmitter_thread.start()
     
     canvas = Canvas()
+
+    window.bind("<KeyPress>", input_manager.key_pressed)
+    window.bind("<KeyRelease>", input_manager.key_released)
+
     canvas.bind("<Motion>", input_manager.motion)
-    canvas.bind("<KeyPress>", input_manager.key_pressed)
-    canvas.bind("<KeyRelase>", input_manager.key_released)
     canvas.bind("<ButtonPress-1>", input_manager.left_click_pressed)
     canvas.bind("<ButtonRelease-1>", input_manager.left_click_released)
     canvas.bind("<ButtonPress-2>", input_manager.right_click_pressed)

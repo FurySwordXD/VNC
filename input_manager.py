@@ -22,40 +22,48 @@ class InputManager:
 
     def motion(self, event):
         self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
+        self.conn.send(str(self.input).encode())
 
     def key_pressed(self, event):
         print("Key Press: ", repr(event.char))
         self.input["keys"].add(repr(event.char))
+        self.conn.send(str(self.input).encode())
     
     def key_released(self, event):
         print("Key Released: ", repr(event.char))
-        self.input["keys"].remove(repr(event.char))
+        try:
+            self.input["keys"].remove(repr(event.char))
+        finally:
+            self.conn.send(str(self.input).encode())
 
     def left_click_pressed(self, event):
         self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
         self.input["lmb"] = True
+        self.conn.send(str(self.input).encode())
 
     def left_click_released(self, event):
         self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
         self.input["lmb"] = False
+        self.conn.send(str(self.input).encode())
 
     def right_click_pressed(self, event):
         self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
         self.input["rmb"] = True
+        self.conn.send(str(self.input).encode())
 
     def right_click_released(self, event):
         self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
         self.input["rmb"] = False
+        self.conn.send(str(self.input).encode())
 
     def transmit(self):
-        conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        conn.connect((self.ip, self.port))
+        self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.conn.connect((self.ip, self.port))
         print("Connected to ", self.ip, ":", self.port)
-        while True:
-            #print(self.input["mouse_pos"])
-            conn.send(str(self.input).encode())
-            self.input["keys"] = []
-            conn.recv(10)
+        # while True:
+        #     #print(self.input["mouse_pos"])
+        #     conn.send(str(self.input).encode())
+        #     conn.recv(10)
 
     def receive(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sender:
@@ -99,4 +107,4 @@ class InputManager:
                     #    mouse_var.release(mouse.Button.right)
                     for k in received_input['keys']:
                         keyboard_var.press(k)
-                    conn.send("ACK".encode())
+                    #conn.send("ACK".encode())
