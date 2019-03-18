@@ -10,7 +10,7 @@ class InputManager:
             "mouse_pos": [0.0, 0.0],
             "lmb": False,
             "rmb": False,
-            "keys": set()
+            "keys": []
         }
         self.ip = ip
         self.port = port
@@ -27,7 +27,8 @@ class InputManager:
 
     def key_pressed(self, event):
         print("Key Press: ", repr(event.char))
-        self.input["keys"].add(repr(event.char))
+        self.input["keys"].append(repr(event.char))
+        self.input["keys"] = list(set(self.input["keys"]))
         self.conn.send(str(self.input).encode())
         self.conn.recv(10)
     
