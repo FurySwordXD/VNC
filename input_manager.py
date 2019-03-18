@@ -23,11 +23,13 @@ class InputManager:
     def motion(self, event):
         self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
         self.conn.send(str(self.input).encode())
+        self.conn.recv(10)
 
     def key_pressed(self, event):
         print("Key Press: ", repr(event.char))
         self.input["keys"].add(repr(event.char))
         self.conn.send(str(self.input).encode())
+        self.conn.recv(10)
     
     def key_released(self, event):
         print("Key Released: ", repr(event.char))
@@ -35,26 +37,31 @@ class InputManager:
             self.input["keys"].remove(repr(event.char))
         finally:
             self.conn.send(str(self.input).encode())
+            self.conn.recv(10)
 
     def left_click_pressed(self, event):
         self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
         self.input["lmb"] = True
         self.conn.send(str(self.input).encode())
+        self.conn.recv(10)
 
     def left_click_released(self, event):
         self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
         self.input["lmb"] = False
         self.conn.send(str(self.input).encode())
+        self.conn.recv(10)
 
     def right_click_pressed(self, event):
         self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
         self.input["rmb"] = True
         self.conn.send(str(self.input).encode())
+        self.conn.recv(10)
 
     def right_click_released(self, event):
         self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
         self.input["rmb"] = False
         self.conn.send(str(self.input).encode())
+        self.conn.recv(10)
 
     def transmit(self):
         self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -106,5 +113,6 @@ class InputManager:
                     #else:
                     #    mouse_var.release(mouse.Button.right)
                     for k in received_input['keys']:
-                        keyboard_var.press(k)
-                    #conn.send("ACK".encode())
+                        print(k)
+                        keyboard_var.press(upper(k))
+                    conn.send("ACK".encode())
