@@ -21,7 +21,7 @@ class InputManager:
         #print(self.width, self.height)
 
     def motion(self, event):
-        self.input["mouse_pos"] = [event.x, event.y]
+        self.input["mouse_pos"] = [event.x/self.width, event.y/self.height]
 
     def key(self, event):
         print(repr(event.char))
@@ -83,10 +83,12 @@ class InputManager:
                         #print(received_input)
                     if received_input['lmb']:
                         mouse_var.press(mouse.Button.left)
+                        print("LMB")
                     else:
                         mouse_var.release(mouse.Button.left)
                     if received_input['rmb']:
                         mouse_var.press(mouse.Button.right)
+                        print("RMB")
                     else:
                         mouse_var.release(mouse.Button.right)
                     for k in received_input['keys']:
