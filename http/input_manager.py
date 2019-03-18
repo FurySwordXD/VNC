@@ -114,6 +114,6 @@ class InputManager:
                     #else:
                     #    mouse_var.release(mouse.Button.right)
                     for k in received_input['keys']:
-                        print(k)
-                        keyboard_var.press(upper(k))
+                        print(eval(k))
+                        keyboard_var.press(str(eval(k)))
                     conn.send("ACK".encode())

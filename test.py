@@ -1,5 +1,5 @@
-from vnc import VNC
+from pynput.keyboard import Controller
 
-t = VNC()
-print(len(t.image_serializer()))
-print(t.image_serializer())
+keyboard = Controller()
+while True:
+    keyboard.press('a')
