@@ -1,5 +1,5 @@
 from PIL import Image
-from threading import Thread
+from threading import Thread, Barrier
 from io import StringIO
 from flask import send_file
 import socket
@@ -17,6 +17,7 @@ class VNC:
         self.ip = ip
         self.port = port
         self.open_sockets = open_sockets
+        self.barrier = Barrier(self.open_sockets)
         
         self.data = []
         for i in range(self.open_sockets*2):
@@ -121,6 +122,7 @@ class VNC:
                         #print(conn.recv(10).decode())
                     except Exception as e:
                         print(e)
+                    self.barrier.wait()
                     
     def receive_multi(self, ip='127.0.0.1', port=7000, part_index=0):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as receiver:
@@ -149,6 +151,7 @@ class VNC:
                     self.data[stride].insert(part_index, byte_data[:length])
                 byte_data = byte_data[length:]
                 #print("Thread ("+str(part_index)+"): ", len(self.data[stride]))
+                self.barrier.wait()
                 try:
                     if len(self.data[stride]) == self.open_sockets:
                         self.image = pickle.loads(b"".join(self.data[stride]))
