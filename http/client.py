@@ -12,7 +12,7 @@ def gui(ip, port, input_manager):
 
     window = Tk()
     window.geometry("1280x720")
-    window.title("VNC Madafaka")
+    window.title("VNC")
     
     window.update()
     input_manager.set_resolution(window.winfo_width(), window.winfo_height())
