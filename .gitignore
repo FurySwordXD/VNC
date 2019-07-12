@@ -103,3 +103,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 .vscode/
+
+http/
+tcp_sockets/
+threaded_sockets/
+udp_sockets/
