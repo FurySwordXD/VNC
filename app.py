@@ -58,9 +58,10 @@ def connect(ip):
 def transmit_input(data, event_type):
     if status == 'client':
         if event_type == 'keydown':
+            input_manager.transmit_input(keydown=data)
             pass
         elif event_type == 'keyup':
-            #print(data)
+            input_manager.transmit_input(keyup=data)
             pass
         elif event_type == 'mousemove':
             #print(data)
