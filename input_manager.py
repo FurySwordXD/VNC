@@ -187,7 +187,6 @@ class InputManager:
                             mouse_controller.press(mouse.Button.left)
                         except:
                             pass
-                    else:
 
 
                     if received_input['mouse_up'] == 0:
