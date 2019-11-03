@@ -173,30 +173,33 @@ class InputManager:
 
                 while True:
                     #start_time = time.time()
-                    received_input = eval(self.recv_msg(conn).decode())
-                    print(received_input)
-                    
-                    mouse_input = received_input['mouse_pos']
-                    if mouse_input:
-                        mouse_input[0] = mouse_input[0] * width
-                        mouse_input[1] = mouse_input[1] * height
+                    try:
+                        received_input = eval(self.recv_msg(conn).decode())
+                        print(received_input)
+                        
+                        mouse_input = received_input['mouse_pos']
+                        if mouse_input:
+                            mouse_input[0] = mouse_input[0] * width
+                            mouse_input[1] = mouse_input[1] * height
 
-                        mouse_controller.position = tuple(mouse_input)
+                            mouse_controller.position = tuple(mouse_input)
 
-                    if received_input['mouse_down'] == 0:
-                        mouse_controller.press(mouse.Button.left)
+                        if received_input['mouse_down'] == 0:
+                            mouse_controller.press(mouse.Button.left)
 
-                    if received_input['mouse_up'] == 0:
-                        mouse_controller.release(mouse.Button.left)
+                        if received_input['mouse_up'] == 0:
+                            mouse_controller.release(mouse.Button.left)
 
-                    if received_input['mouse_down'] == 2:
-                        mouse_controller.press(mouse.Button.right)
+                        if received_input['mouse_down'] == 2:
+                            mouse_controller.press(mouse.Button.right)
 
-                    if received_input['mouse_up'] == 2:
-                        mouse_controller.release(mouse.Button.right)
+                        if received_input['mouse_up'] == 2:
+                            mouse_controller.release(mouse.Button.right)
 
-                    if received_input['keydown']:
-                        keyboard_controller.press(keyboard.KeyCode(received_input['keydown']))
+                        if received_input['keydown']:
+                            keyboard_controller.press(keyboard.KeyCode(received_input['keydown']))
 
-                    if received_input['keyup']:
-                        keyboard_controller.release(keyboard.KeyCode(received_input['keyup']))
+                        if received_input['keyup']:
+                            keyboard_controller.release(keyboard.KeyCode(received_input['keyup']))
+                    except:
+                        pass
