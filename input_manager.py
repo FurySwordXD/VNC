@@ -168,7 +168,7 @@ class InputManager:
                 width, height = pyautogui.size()
                 print(width, height)
                 mouse_controller = mouse.Controller()
-                keyboard_controller = keyboard.Controller()
+                
 
                 mouse_buttons = [mouse.Button.left, mouse.Button.middle, mouse.Button.right]
 
@@ -202,7 +202,7 @@ class InputManager:
 
                         if received_input['keyup']:
                             keyboard.release(received_input['keyup'])
-                            
+
                     except Exception as e:
                         print(e)
                         pass
