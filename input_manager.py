@@ -2,7 +2,8 @@ import socket
 import time
 import pyautogui
 import struct
-from pynput import mouse, keyboard
+from pynput import mouse
+import keyboard
 
 class InputManager:
 
@@ -197,10 +198,11 @@ class InputManager:
                             mouse_controller.release(mouse.Button.right)
 
                         if received_input['keydown']:
-                            keyboard_controller.press(keyboard.KeyCode(received_input['keydown']))
+                            keyboard.press(received_input['keydown'])
 
                         if received_input['keyup']:
-                            keyboard_controller.release(keyboard.KeyCode(received_input['keyup']))
+                            keyboard.release(received_input['keyup'])
+                            
                     except Exception as e:
                         print(e)
                         pass
