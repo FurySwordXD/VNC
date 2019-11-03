@@ -8,8 +8,7 @@ import time
 
 class VNC:
 
-    def __init__(self, ip='127.0.0.1', port=7000):
-        self.data_string = b''
+    def __init__(self, ip='0.0.0.0', port=7000):
         self.ip = ip
         self.port = port
 
@@ -27,6 +26,9 @@ class VNC:
         image.save(buffer, format='jpeg')
         data_string = base64.b64encode(buffer.getvalue())
         return data_string
+
+    def image_deserializer(self, image_string):
+        return Image.open(BytesIO(base64.b64decode(image_string)))
 
     def send_msg(self, sock, msg):
         # Prefix each message with a 4-byte length (network byte order)
@@ -59,9 +61,9 @@ class VNC:
             print('Waiting for connection...')
             conn, addr = sender.accept()
             with conn:
-                print('Connected by', addr)                
+                print('Connected by', addr)      
                 while True:
-                    start_time = time.time()
+                    #start_time = time.time()
                     self.send_msg(conn, self.image_serializer())
                     #print(self.data_string)
                     #print("FPS: ", 1/(time.time() - start_time))
@@ -73,11 +75,9 @@ class VNC:
 
     def receive(self):    
         try:
-            start_time = time.time()
-            self.data_string = self.recv_msg(self.conn)
-            if self.data_string:
-                image = Image.open(BytesIO(base64.b64decode(self.data_string.decode())))
-                return image
+            #start_time = time.time()
+            data_string = self.recv_msg(self.conn)
+            return data_string.decode()
             #self.image.show()
             # print("FPS: ", 1/(time.time() - start_time))
             

@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     while True:
 
-        image = client.receive()
+        image = client.image_deserializer(client.receive())
         if image:
             image = image.resize((window.winfo_width(), window.winfo_height()), Image.ANTIALIAS)
             photo = ImageTk.PhotoImage(image=image)
