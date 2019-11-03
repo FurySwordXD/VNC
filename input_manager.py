@@ -181,13 +181,15 @@ class InputManager:
 
                         mouse_controller.position = tuple(mouse_input)
 
-                    if received_input['mouse_down']:
+                    if received_input['mouse_down'] == 0:
                         mouse_buttons = [mouse.Button.left, mouse.Button.middle, mouse.Button.right]
                         try:
                             mouse_controller.press(mouse.Button.left)
                         except:
                             pass
+                    else:
 
-                    if received_input['mouse_up']:
+
+                    if received_input['mouse_up'] == 0:
 
                         mouse_controller.release(mouse.Button.left)
