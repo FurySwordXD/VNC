@@ -195,5 +195,5 @@ class InputManager:
                     if received_input['mouse_up'] == 2:
                         mouse_controller.release(mouse.Button.right)
 
-                    keyboard_controller.press(str(eval(received_input['keydown'])))
-                    keyboard_controller.release(str(eval(received_input['keyup'])))
+                    keyboard_controller.press(str(received_input['keydown']))
+                    keyboard_controller.release(str(received_input['keyup']))
