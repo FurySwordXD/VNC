@@ -201,5 +201,6 @@ class InputManager:
 
                         if received_input['keyup']:
                             keyboard_controller.release(keyboard.KeyCode(received_input['keyup']))
-                    except:
+                    except Exception as e:
+                        print(e)
                         pass
