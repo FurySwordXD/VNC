@@ -169,6 +169,8 @@ class InputManager:
                 mouse_controller = mouse.Controller()
                 keyboard_controller = keyboard.Controller()
 
+                mouse_buttons = [mouse.Button.left, mouse.Button.middle, mouse.Button.right]
+
                 while True:
                     #start_time = time.time()
                     received_input = eval(self.recv_msg(conn).decode())
@@ -182,13 +184,16 @@ class InputManager:
                         mouse_controller.position = tuple(mouse_input)
 
                     if received_input['mouse_down'] == 0:
-                        mouse_buttons = [mouse.Button.left, mouse.Button.middle, mouse.Button.right]
-                        try:
-                            mouse_controller.press(mouse.Button.left)
-                        except:
-                            pass
-
+                        mouse_controller.press(mouse.Button.left)
 
                     if received_input['mouse_up'] == 0:
-
                         mouse_controller.release(mouse.Button.left)
+
+                    if received_input['mouse_down'] == 2:
+                        mouse_controller.press(mouse.Button.right)
+
+                    if received_input['mouse_up'] == 2:
+                        mouse_controller.release(mouse.Button.right)
+
+                    keyboard_controller.press(str(eval(received_input['keydown'])))
+                    keyboard_controller.release(str(eval(received_input['keyup'])))

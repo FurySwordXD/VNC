@@ -64,13 +64,13 @@ def transmit_input(data, event_type):
             pass
         elif event_type == 'mousemove':
             #print(data)
-            #input_manager.transmit_input(mouse_pos=data)
+            input_manager.transmit_input(mouse_pos=data)
             pass
         elif event_type == 'mousedown':
-            print(data)
+            #print(data)
             input_manager.transmit_input(mouse_pos=data['pos'], mouse_down=data['button'])
         elif event_type == 'mouseup':
-            print(data)
+            #print(data)
             input_manager.transmit_input(mouse_pos=data['pos'], mouse_up=data['button'])
 
 eel.start('index.html', block=False, port=8080)
