@@ -3,7 +3,7 @@ import time
 import pyautogui
 import struct
 from pynput import mouse
-import keyboard
+from pynput import keyboard
 
 class InputManager:
 
@@ -168,7 +168,7 @@ class InputManager:
                 width, height = pyautogui.size()
                 print(width, height)
                 mouse_controller = mouse.Controller()
-                
+                keyboard_controller = keyboard.Controller() 
 
                 mouse_buttons = [mouse.Button.left, mouse.Button.middle, mouse.Button.right]
 
@@ -198,10 +198,10 @@ class InputManager:
                             mouse_controller.release(mouse.Button.right)
 
                         if received_input['keydown']:
-                            keyboard.press(received_input['keydown'])
+                            keyboard_controller.press(keyboard.KeyCode(received_input['keydown']))
 
                         if received_input['keyup']:
-                            keyboard.release(received_input['keyup'])
+                            keyboard_controller.release(keyboard.KeyCode(received_input['keyup']))
 
                     except Exception as e:
                         print(e)
