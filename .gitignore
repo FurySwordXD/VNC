@@ -108,3 +108,6 @@ http/
 tcp_sockets/
 threaded_sockets/
 udp_sockets/
+
+client.py
+host.py
